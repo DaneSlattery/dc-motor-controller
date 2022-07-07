@@ -1,0 +1,29 @@
+Circuit: * D:\projects\motor-controller\Draft3.asc
+
+WARNING: Node REV_HI is floating.
+WARNING: Node FWD_LOW is floating.
+WARNING: Node FWD_HI is floating.
+WARNING: Node REV_LOW is floating.
+
+Direct Newton iteration for .op point succeeded.
+Changing Tseed to 9.76563e-011
+Changing Tseed to 9.76562e-013
+Heightened Def Con from 5.0354e-012 to 2.00504e-009
+
+Date: Tue Jul 05 21:27:20 2022
+Total elapsed time: 0.155 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 2528
+traniter = 2509
+tranpoints = 1086
+accept = 1065
+rejected = 20
+matrix size = 25
+fillins = 22
+solver = Normal
+Matrix Compiler1: 2.41 KB object code size  0.3/0.2/[0.2]
+Matrix Compiler2: off  [0.1]/0.2/0.1
+

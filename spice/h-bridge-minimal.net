@@ -1,0 +1,45 @@
+* D:\projects\dc-motor-controller\spice\h-bridge-minimal.asc
+M1 12V fwd_high N008 N008 IRFZ44N
+M2 N008 rev_low 0 0 IRFZ44N
+M3 12V rev_high N010 N010 IRFZ44N
+M4 N010 fwd_low 0 0 IRFZ44N
+V1 12V 0 12
+V2 N012 0 PULSE(0 3.3 0 1n 1n 50u 100u)
+R1 N013 N012 1k
+Q1 N007 N013 0 0 BC547B
+R2 N003 N007 500
+D1 12V N003 1N4148
+C1 N003 N008 1µ
+R3 fwd_high N007 22
+R4 N010 N009 10
+Q4 N016 N018 0 0 BC547B
+R7 12V N016 500
+R8 fwd_low N016 22
+R5 N018 N012 1k
+V3 NC_01 0 3.3
+R6 N014 N015 1k
+Q7 N011 N014 0 0 BC547B
+R9 N006 N011 500
+R10 rev_high N011 22
+Q10 N017 N019 0 0 BC547B
+R11 12V N017 500
+R12 rev_low N017 22
+R13 N019 N015 1k
+D2 12V N006 1N4148
+C2 N006 N010 1µ
+L1 N009 N008 10µ
+R14 rev_high 0 2.2k
+R15 rev_low 0 2.2k
+R16 N006 N014 1k
+R17 12V N019 1k
+.model D D
+.lib C:\Users\biopl\Documents\LTspiceXVII\lib\cmp\standard.dio
+.model NPN NPN
+.model PNP PNP
+.lib C:\Users\biopl\Documents\LTspiceXVII\lib\cmp\standard.bjt
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\biopl\Documents\LTspiceXVII\lib\cmp\standard.mos
+.tran 2m
+.backanno
+.end

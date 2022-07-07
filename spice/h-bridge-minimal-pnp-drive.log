@@ -1,0 +1,29 @@
+Circuit: * D:\projects\dc-motor-controller\spice\h-bridge-minimal-pnp-drive.asc
+
+WARNING: Less than two connections to node NC_01.  This node is used by V3.
+Direct Newton iteration for .op point succeeded.
+Heightened Def Con from 1.0002e-011 to 1.1e-009
+Heightened Def Con from 0.000300149 to 0.000300154
+Heightened Def Con from 0.000400112 to 0.000400116
+Heightened Def Con from 0.000800113 to 0.000800117
+Heightened Def Con from 0.000900113 to 0.000900118
+Heightened Def Con from 0.00140011 to 0.00140011
+Heightened Def Con from 0.00150011 to 0.00150011
+
+Date: Thu Jul 07 21:22:28 2022
+Total elapsed time: 0.561 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 53194
+traniter = 53179
+tranpoints = 14670
+accept = 11089
+rejected = 3588
+matrix size = 55
+fillins = 34
+solver = Normal
+Matrix Compiler1: 5.43 KB object code size  0.8/0.4/[0.3]
+Matrix Compiler2: 5.33 KB object code size  0.3/0.4/[0.3]
+
