@@ -1,74 +1,93 @@
-from glob import glob
-import random
+from matplotlib.lines import Line2D
 import numpy as np
-from matplotlib import style
 import matplotlib.animation as animation
-import serial
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.axes import Axes
+import serial
 
 import time
 
 
-# initialize serial port
-ser = serial.Serial()
-ser.port = 'COM3'  # Arduino serial port
-ser.baudrate = 9600
-ser.timeout = 10  # specify timeout when using readline()
-ser.open()
-if ser.is_open == True:
-    print("\nAll right, serial port now open. Configuration:\n")
-    print(ser, "\n")  # print serial parameters
+class SerialPlot:
+    def __init__(self) -> None:
+        self.serial_port = serial.Serial()
+        self.serial_port.port = 'COM5'
+        self.serial_port.baudrate = 9600
+        self.serial_port.timeout = 10
 
-# Create figure for plotting
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-xs = []  # store trials here (n)
-ys = []  # store relative frequency here
-pwm = []
-global count
-count = 0
-# This function is called periodically from FuncAnimation
+        self.serial_port.open()
+        if self.serial_port == True:
+            print("Serial port open. Configuration:\n")
+            print(self.serial_port, "\n")  # print serial parameters
+            if self.serial_port.in_waiting:
+                self.serial_port.flush()
+
+        self.fig, ax = plt.subplots(nrows=2, ncols=1)
+
+        self.ax1: Axes = ax[0]
+        self.ax2: Axes = ax[1]
+        self.dt = 0.05
+        self.maxt = 10
+        self.tdata = [0]
+        self.ydata = [0]
+        self.y2data = [0]
+        self.y3data = [0]
+        self.line = Line2D(self.tdata, self.ydata, color='r')
+        self.line2 = Line2D(self.tdata, self.y2data)
+        self.line3 = Line2D(self.tdata, self.y3data, color='r')
+        self.ax1.add_line(self.line)
+        self.ax1.add_line(self.line2)
+        self.ax1.set_ylim(-.1, 1.1)
+        self.ax1.set_xlim(0, self.maxt)
+        self.ax1.set_xlabel('Time [s]')
+
+        self.ax2.add_line(self.line3)
+        self.ax2.set_ylim(-.1, 1.1)
+        self.ax2.set_xlim(0, self.maxt)
+
+        self.fig.canvas.mpl_connect('close_event', self.on_close)
+
+    def on_close(self, event):
+        self.serial_port.close()
+
+    def run(self):
+        anim = animation.FuncAnimation(
+            self.fig, self.animate, self.get_data, interval=self.dt*1000)
+        plt.show()
+
+    def get_data(self):
+        try:
+            if self.serial_port.in_waiting:
+                line = self.serial_port.readline().decode('ascii')
+                # print(line)
+                line_as_list = line.split(':')
+                pot = float(line_as_list[1].strip().split(',')[0])
+                pwm = float(line_as_list[2].strip().split(',')[0])
+                isr = float(line_as_list[3].strip(' \n\r').split(',')[0])
+                yield pot, pwm, pwm
+        except IndexError:
+            pass
+
+    def animate(self, vals):
+        pot, pwm, isr = vals
+        lastt = self.tdata[-1]
+        t = lastt+self.dt
+        if lastt > self.maxt:
+            self.ax1.set_xlim(lastt, lastt + self.maxt)
+            self.ax2.set_xlim(lastt, lastt + self.maxt)
+
+            self.maxt += lastt
+
+        # Add x and y to lists
+        self.tdata.append(t)
+        self.ydata.append(pot)
+        self.y2data.append(pwm)
+        self.y3data.append(isr)
+
+        self.line.set_data(self.tdata, self.ydata)
+        self.line2.set_data(self.tdata, self.y2data)
+        self.line3.set_data(self.tdata, self.y3data)
 
 
-def animate(i, xs, ys, pwm):
-    global count
-    # Aquire and parse data from serial port
-    line = ser.readline().decode('ascii')
-    # print(line)
-    line_as_list = line.split(':')
-    count += 1
-    relProb = line_as_list[1]
-    relProb_as_list = relProb.split()
-    relProb_float = float(relProb_as_list[0])
-
-    # Add x and y to lists
-    xs.append(count)
-    ys.append(relProb_float)
-    pwm.append(float(line_as_list[2].split(',')[0]))
-
-    # Limit x and y lists to 20 items
-    # xs = xs[-20:]
-    # ys = ys[-20:]
-
-    # Draw x and y lists
-    ax.clear()
-    ax.plot(xs, ys, label="pot")
-    ax.plot(xs, pwm, label="pwm")
-
-    # Format plot
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.title('This is how I roll...')
-    plt.ylabel('float')
-    plt.legend()
-    plt.axis([1, None, 0, 1.1])  # Use for arbitrary number of trials
-    # plt.axis([1, 100, 0, 1.1])  # Use for 100 trial demo
-
-
-# Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(
-    fig, animate, fargs=(xs, ys, pwm), interval=10)
-
-plt.show()
-ser.close()             # close port
+my_ser = SerialPlot()
+my_ser.run()

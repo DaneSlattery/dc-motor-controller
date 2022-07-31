@@ -13,7 +13,7 @@
 #define PWM_OUT_PIN PA_8 // so far, A1 and B0 are DEAD for PWM
 #define MOT_DIR_1 PA_9
 #define MOT_DIR_2 PA_10
-#define PWM_PERIOD_US 50 // 20kHz
+#define PWM_PERIOD_US 100 // 20kHz
 
 // from experimental data:
 /*
@@ -73,8 +73,8 @@ int main()
 
 		motor_pwm.write(motor_duty_cycle);
 
-		printf("pot: %.3f pwm: %.3f , isr: %d \n", pot_value, motor_duty_cycle, my_enc.read());
-		thread_sleep_for(100);
+		printf("pot: %.3f, pwm: %.3f, isr: %d \n", pot_value, motor_duty_cycle, my_enc.read());
+		thread_sleep_for(50);
 	}
 }
 
