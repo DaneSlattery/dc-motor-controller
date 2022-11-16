@@ -4,7 +4,9 @@
  */
 
 #include "mbed.h"
+
 #include "opt_encoder.hpp"
+#include "pid.hpp"
 
 #define TX_PIN PA_2
 #define RX_PIN PA_3
@@ -54,17 +56,26 @@ int main()
 	// initialise variables
 	float pot_value = 0.0;
 	float motor_duty_cycle = 0.0; // [0, 1]
+	double target_rpm{}, current_rpm{};
 
-	// rising pin interrupt
 	OptEncoder my_enc{OPT_ENCODER_PIN};
+
+	PID rpm_pid{0.01, 0, 0};
 
 	while (1)
 	{
-		// read the analog value
+		// read the potentiometer value
 		pot_value = pot_analog_in.read();
+		target_rpm = pot_value * 100; // random scale
 
-		// set the pot value to the desired duty cycle
-		motor_duty_cycle = pot_value;
+		// read the current rpm
+		current_rpm = my_enc.read();
+		// calculate the PID change
+		double output_pwm = rpm_pid.update(target_rpm, current_rpm);
+
+		// set the output
+		motor_duty_cycle = output_pwm;
+
 		// clamp the duty cycle below 90%
 		motor_duty_cycle = fmin(motor_duty_cycle, MAX_MOTOR_PWM);
 		// if it's less than 10%, set it to 0% to prevent stall current
@@ -72,8 +83,8 @@ int main()
 			motor_duty_cycle = 0.0;
 
 		motor_pwm.write(motor_duty_cycle);
+		printf("pot: %.3f, target_rpm: %.3f, current_rpm: %.3f, motor_duty: %.3f  \n", pot_value, target_rpm, current_rpm, motor_duty_cycle);
 
-		printf("pot: %.3f, pwm: %.3f, isr: %d \n", pot_value, motor_duty_cycle, my_enc.read());
 		thread_sleep_for(50);
 	}
 }

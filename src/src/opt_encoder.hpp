@@ -1,5 +1,5 @@
-#ifndef TEST_INT_H
-#define TEST_INT_H
+#ifndef OPT_ENC_H
+#define OPT_ENC_H
 
 #include "mbed.h"
 
@@ -11,6 +11,11 @@ private:
     uint32_t _rpm{};
     Timer _timer{};
 
+    void rise_isr()
+    {
+        _count++;
+    }
+
 public:
     // test documentation
     OptEncoder(PinName enc_pin) : _interrupt_pin(enc_pin)
@@ -20,11 +25,6 @@ public:
 
     ~OptEncoder();
 
-    void rise_isr()
-    {
-        _count++;
-    }
-
     int read()
     {
         auto time = std::chrono::duration_cast<std::chrono::milliseconds>(_timer.elapsed_time()).count();
@@ -33,7 +33,7 @@ public:
             _timer.start();
             return 0;
         }
-        _rpm = (6000 * _count) / time;
+        _rpm = (6000 * _count) / time; // 6000 = (10 slots * 60 seconds)
         _count = 0;
 
         _timer.reset();
