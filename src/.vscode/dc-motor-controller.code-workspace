@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "src",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"output": "plaintext",
+			"exception": "cpp"
+		}
+	}
+}
