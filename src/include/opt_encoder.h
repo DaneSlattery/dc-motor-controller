@@ -3,7 +3,6 @@
 
 #include "driver/gpio.h"
 #include "driver/gptimer.h"
-#include "driver/timer.h"
 #include "freertos/FreeRTOS.h"
 
 class OptEncoder

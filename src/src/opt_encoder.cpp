@@ -20,11 +20,12 @@ void OptEncoder::init_hw()
     io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
     gpio_config(&io_conf);
     printf("init gpio\n");
-    gptimer_handle_t gptimer = NULL;
+
+    gptimer = NULL;
     gptimer_config_t tim_conf;
     tim_conf.clk_src = GPTIMER_CLK_SRC_DEFAULT;
     tim_conf.direction = GPTIMER_COUNT_UP;
-    tim_conf.resolution_hz = 1000000;
+    tim_conf.resolution_hz = 1 * 1000 * 1000;
     ESP_ERROR_CHECK(gptimer_new_timer(&tim_conf, &gptimer));
     ESP_ERROR_CHECK(gptimer_enable(gptimer));
     ESP_ERROR_CHECK(gptimer_start(gptimer));
@@ -44,9 +45,9 @@ void IRAM_ATTR OptEncoder::rise_isr(void *data)
 int OptEncoder::get_rpm()
 {
     uint64_t raw_count;
-    printf("get rpm\n");
+
     ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer, &raw_count));
-    printf("%llu", raw_count);
+    printf("raw count = %llu us\n", raw_count);
     // auto time = std::chrono::duration_cast<std::chrono::milliseconds>(raw_count).count();
     // if (time == 0)
     // {
@@ -56,6 +57,6 @@ int OptEncoder::get_rpm()
     // rpm = (6000 * count) / time; // 6000 = (10 slots * 60 seconds)
     count = 0;
 
-    gptimer_set_raw_count(gptimer, 0);
+    // gptimer_set_raw_count(gptimer, 0);
     return rpm;
 }
