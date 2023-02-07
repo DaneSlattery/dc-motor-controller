@@ -11,7 +11,8 @@
 	"settings": {
 		"files.associations": {
 			"output": "plaintext",
-			"exception": "cpp"
+			"exception": "cpp",
+			"chrono": "cpp"
 		}
 	}
 }
