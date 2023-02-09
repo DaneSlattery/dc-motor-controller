@@ -4,30 +4,31 @@
 #include "driver/gpio.h"
 #include "driver/gptimer.h"
 #include "freertos/FreeRTOS.h"
-
-class OptEncoder
+namespace peripherals
 {
-private:
-    gpio_num_t opt_in_pin;
+    class OptEncoder
+    {
+    private:
+        gpio_num_t opt_in_pin;
 
-    uint32_t count;
-    const uint32_t num_slots = 10;
+        uint32_t count;
+        const uint32_t num_slots = 20;
 
-    gptimer_handle_t gptimer;
-    uint64_t timer_count;
+        gptimer_handle_t gptimer;
+        uint64_t timer_count;
 
-    uint32_t rpm;
+        uint32_t rpm;
 
-    void init_hw();
+        void init_hw();
 
-    static void rise_isr(void *data);
+        static void rise_isr(void *data);
 
-public:
-    OptEncoder(gpio_num_t enc_pin);
+    public:
+        OptEncoder(gpio_num_t enc_pin);
 
-    ~OptEncoder();
+        ~OptEncoder();
 
-    int get_rpm();
-};
-
+        int get_rotation_rate();
+    };
+}
 #endif

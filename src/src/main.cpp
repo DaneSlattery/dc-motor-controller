@@ -13,7 +13,7 @@
 // #define GPIO_STP_PIN_SEL (1ULL << GPIO_STP)
 
 extern "C" void app_main();
-
+using namespace peripherals;
 void app_main()
 {
 	const TickType_t delay = 500 / portTICK_PERIOD_MS;
@@ -22,10 +22,8 @@ void app_main()
 	while (1)
 	{
 
-		// Retrieve the timestamp at any time
-
 		// printf("%ld, %d \n", rot_enc.get_count(), rot_enc.clk_val);
-		opt_enc.get_rpm();
+		opt_enc.get_rotation_rate();
 		// printf("%ld, %d \n", rot_enc.get_count(), rot_enc.clk_val);
 		vTaskDelay(delay);
 	}
